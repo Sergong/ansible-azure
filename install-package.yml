@@ -18,7 +18,7 @@
       package:
         name: nginx
         state: present
-      notify: start nginx
+      notify: restart nginx
 
     # - name: Open port 80 on the firewall            # by default firewalld is not enabled and running so this will fail
     #   firewalld:
