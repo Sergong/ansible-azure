@@ -1,0 +1,13 @@
+---
+- name: delete azure resource group
+  hosts: localhost
+  tasks:
+    - name: Deleting resource group - "{{ rg_name }}"
+      azure_rm_resourcegroup:
+        name: "{{ rg_name }}"
+        state: absent
+        force_delete_nonempty: true
+      register: rg
+    - name: Show result
+      debug:
+        var: rg

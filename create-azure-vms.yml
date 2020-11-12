@@ -1,0 +1,116 @@
+---
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+
+  vars:
+    ResourceGroupName: "ansible-inventory-test-rg"
+    VMNames:
+      - name: "ansible-inventory-test-vm1"
+      - name: "ansible-inventory-test-vm2"
+    username: "smeeuwsen"
+    mytags:
+      Ansible: nginx
+    vnet_name: "myVnet"
+    vnet_prefix: "10.0.0.0/16"
+    vnet_subnet: "10.0.1.0/24"
+    vnet_subnet_name: "mySubnet"
+    pub_ip_name_ext: "-PublIP"
+    sec_group_name: "myNetworkSecurityGroup"
+    nic_name_ext: "-NIC"
+
+  tasks:
+    - name: Create Resource Group
+      azure_rm_resourcegroup:
+        name: "{{ ResourceGroupName }}"
+        location: eastus
+
+    # - name: Test loop
+    #   debug:
+    #     msg: |
+    #       "{{ item.name }}"
+    #       "{{ mytags }}"
+    #   loop: "{{ VMNames }}"
+
+    # - name: Test message
+    #   debug:
+    #     msg: "{{ VMNames[0].name }}"
+
+    - name: Create Virtual Network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ ResourceGroupName}}"
+        name: "{{ vnet_name }}"
+        address_prefixes: "{{ vnet_prefix }}"
+        state: present
+
+    - name: Add a subnet
+      azure_rm_subnet:
+        resource_group: "{{ ResourceGroupName }}"
+        name: "{{ vnet_subnet_name }}"
+        virtual_network_name: "{{ vnet_name }}"
+        address_prefix: "{{ vnet_subnet }}"
+        state: present
+
+    - name: Create public IP addresses
+      azure_rm_publicipaddress:
+        resource_group: "{{ ResourceGroupName }}"
+        allocation_method: Static
+        name: "{{ item.name}}{{ pub_ip_name_ext }}"
+        state: present
+      register: output_ip_addresses
+      loop: "{{ VMNames }}"
+
+    - name: Dump public IP address for VM
+      debug:
+        msg: "{{ item.state.ip_address }}"
+      loop: "{{ output_ip_addresses.results }}"
+
+    - name: Create Network Security Group
+      azure_rm_securitygroup:
+        resource_group: "{{ ResourceGroupName }}"
+        name: "{{ sec_group_name }}"
+        state: present
+        rules:
+          - name: SSH
+            protocol: Tcp
+            destination_port_range: 22
+            access: Allow
+            priority: 1001
+            direction: Inbound
+
+    - name: Create Virtual NICs
+      azure_rm_networkinterface:
+        resource_group: "{{ ResourceGroupName }}"
+        name: "{{ item.name }}{{ nic_name_ext }}"
+        virtual_network: "{{ vnet_name }}"
+        subnet: "{{ vnet_subnet_name }}"
+        public_ip_name: "{{ item.name }}{{ pub_ip_name_ext }}"
+        state: present
+      loop: "{{ VMNames }}"
+
+    - name: Create VMs
+      azure_rm_virtualmachine:
+        resource_group: "{{ ResourceGroupName }}"
+        name: "{{ item.name }}"
+        state: present
+        vm_size: Standard_B1ms              # az vm list-sizes --location eastus -o table
+        admin_username: "{{ username }}"
+        ssh_password_enabled: false
+        ssh_public_keys:
+          - path: "/home/{{ username }}/.ssh/authorized_keys"
+            key_data: "{{ lookup('file', './mac-ssh-pubkey') }}"
+
+        network_interfaces: "{{ item.name }}{{ nic_name_ext}}"
+        image:
+          offer: CentOS
+          publisher: OpenLogic
+          sku: '7.5'
+          version: latest
+      loop: "{{ VMNames }}"
+
+    - name: Apply tag to VM - ansible-inventory-test-vm1
+      azure_rm_virtualmachine:
+        resource_group: "{{ ResourceGroupName }}"
+        name: "{{ VMNames[0].name }}"
+        state: present
+        tags: "{{ mytags }}"

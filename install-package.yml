@@ -1,0 +1,42 @@
+---
+- name: Install NGINX
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update Yum
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Install the epel-release package
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Install the NGINX package
+      package:
+        name: nginx
+        state: present
+      notify: start nginx
+
+    # - name: Open port 80 on the firewall            # by default firewalld is not enabled and running so this will fail
+    #   firewalld:
+    #     service: http
+    #     state: enabled
+    #     immediate: true
+    #     permanent: true
+
+    - name: Start and enable NGINX
+      service:
+        name: nginx
+        state: started
+        enabled: true
+
+
+  handlers:
+    - name: restart nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: true
