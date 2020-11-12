@@ -25,17 +25,6 @@
         name: "{{ ResourceGroupName }}"
         location: eastus
 
-    # - name: Test loop
-    #   debug:
-    #     msg: |
-    #       "{{ item.name }}"
-    #       "{{ mytags }}"
-    #   loop: "{{ VMNames }}"
-
-    # - name: Test message
-    #   debug:
-    #     msg: "{{ VMNames[0].name }}"
-
     - name: Create Virtual Network
       azure_rm_virtualnetwork:
         resource_group: "{{ ResourceGroupName}}"
