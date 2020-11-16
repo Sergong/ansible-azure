@@ -8,9 +8,9 @@
       {% for host in groups['tag_Ansible_nginx'] %}
           server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:80 cookie {{ hostvars[host]['ansible_fqdn'] }} check
       {% endfor %}
-    haproxy_ip: |
+    haproxy_ip: >
       {% for host in groups['tag_Ansible_haproxy'] %}
-          {{ hostvars[host]['ansible_host']
+          {{ hostvars[host]['ansible_host'] }}
       {% endfor %}
 
   tasks:
