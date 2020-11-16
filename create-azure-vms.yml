@@ -94,7 +94,7 @@
     - name: Allow HTTP for NGINX on ansible-inventory-test-vm1
       azure_rm_securitygroup:
         resource_group: "{{ ResourceGroupName }}"
-        name: "{{ VMNames[0].name }}{{{ nic_name_ext }}"
+        name: "{{ VMNames[0].name }}{{ nic_name_ext }}"
         state: present
         rules:
           - name: HTTP_in
