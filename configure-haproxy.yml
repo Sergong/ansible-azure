@@ -8,10 +8,6 @@
       {% for host in groups['tag_Ansible_nginx'] %}
           server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:80 cookie {{ hostvars[host]['ansible_fqdn'] }} check
       {% endfor %}
-    haproxy_ip: >
-      {% for host in groups['tag_Ansible_haproxy'] %}
-      {{ hostvars[host]['ansible_host'] }}
-      {% endfor %}
 
   tasks:
     - name: Add nginx hostnames and IP addresses to haproxy config
@@ -33,6 +29,12 @@
 # separate play is required to ensure handler in the play above is executed after a config change, otherwise the test will fail
 - name: Test if the haproxy is server pages correctly
   hosts: tag_FWProt_http
+
+  vars:
+    haproxy_ip: >
+      {% for host in groups['tag_Ansible_haproxy'] %}
+      {{ hostvars[host]['ansible_host'] }}
+      {% endfor %}
 
   tasks:
     - name: Test access to the web page through the loadbalancer
