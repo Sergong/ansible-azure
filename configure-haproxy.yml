@@ -29,7 +29,7 @@
         return_content: true
       register: result
       delegate_to: localhost
-      failed_when: '"reached NGINX on server" not in this.content'
+      failed_when: '"reached NGINX on server" not in result.content'
 
   handlers:
     - name: restart haproxy
