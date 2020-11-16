@@ -39,7 +39,7 @@
   tasks:
     - name: Test access to the web page through the loadbalancer
       uri:
-        url: "http://{{ haproxy_ip | trim }}"
+        url: "http://{{ haproxy_ip | trim }}" # need to trim this because there is whitespace around the ip address otherwise
         return_content: true
       register: result
       delegate_to: localhost
