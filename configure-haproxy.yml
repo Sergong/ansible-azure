@@ -25,7 +25,7 @@
 
     - name: Test access to the web page through the loadbalancer
       uri:
-        url: "http://{{ haproxy_ip }}"
+        url: "http://{{ haproxy_ip | trim }}"
         return_content: true
       register: result
       delegate_to: localhost
