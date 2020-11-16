@@ -10,7 +10,7 @@
       {% endfor %}
     haproxy_ip: >
       {% for host in groups['tag_Ansible_haproxy'] %}
-          {{ hostvars[host]['ansible_host'] }}
+      {{ hostvars[host]['ansible_host'] }}
       {% endfor %}
 
   tasks:
