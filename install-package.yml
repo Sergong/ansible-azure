@@ -18,8 +18,7 @@
       package:
         name: nginx
         state: present
-      notify: restart nginx
-
+      
     # - name: Open port 80 on the firewall            # by default firewalld is not enabled and running so this will fail
     #   firewalld:
     #     service: http
@@ -33,6 +32,12 @@
         state: started
         enabled: true
 
+    # add some test content to default homepage
+    - name: Change the default home page
+      template:
+        content: "Hi, you've reached NGINX on server {{ ansible_facts.hostname }}"
+        dest: /usr/share/nginx/html/index.html
+      notify: restart nginx
 
   handlers:
     - name: restart nginx

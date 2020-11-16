@@ -54,19 +54,6 @@
         msg: "{{ item.state.ip_address }}"
       loop: "{{ output_ip_addresses.results }}"
 
-    - name: Create Network Security Group
-      azure_rm_securitygroup:
-        resource_group: "{{ ResourceGroupName }}"
-        name: "{{ sec_group_name }}"
-        state: present
-        rules:
-          - name: SSH
-            protocol: Tcp
-            destination_port_range: 22
-            access: Allow
-            priority: 1001
-            direction: Inbound
-
     - name: Create Virtual NICs
       azure_rm_networkinterface:
         resource_group: "{{ ResourceGroupName }}"
@@ -103,3 +90,16 @@
         name: "{{ VMNames[0].name }}"
         state: present
         tags: "{{ mytags }}"
+
+    - name: Allow HTTP for NGINX on ansible-inventory-test-vm1
+      azure_rm_securitygroup:
+        resource_group: "{{ ResourceGroupName }}"
+        name: "{{ VMNames[0].name }}{{{ nic_name_ext }}"
+        state: present
+        rules:
+          - name: HTTP_in
+            protocol: Tcp
+            destination_port_range: 80
+            access: Allow
+            priority: 1001
+            direction: Inbound
