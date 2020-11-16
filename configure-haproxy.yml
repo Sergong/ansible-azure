@@ -8,7 +8,10 @@
       {% for host in groups['tag_Ansible_nginx'] %}
           server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:80 cookie {{ hostvars[host]['ansible_fqdn'] }} check
       {% endfor %}
-
+    haproxy_ip: >
+      {% for host in groups['tag_Ansible_haproxy'] %}
+          {{ hostvars[host]['ansible_host']
+      {% endfor %}
 
   tasks:
     - name: Gather nginx hostnames and IP addresses
@@ -19,6 +22,14 @@
         block: "{{ haproxy_block }}"
       when: '"tag_Ansible_haproxy" in group_names'
       notify: restart haproxy
+
+    - name: Test access to the web page through the loadbalancer
+      uri:
+        url: "http://{{ haproxy_ip }}"
+        return_content: true
+      register: result
+      delegate_to: localhost
+      failed_when: '"reached NGINX on server" not in this.content'
 
   handlers:
     - name: restart haproxy
