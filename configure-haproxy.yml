@@ -23,6 +23,18 @@
       when: '"tag_Ansible_haproxy" in group_names'
       notify: restart haproxy
 
+  handlers:
+    - name: restart haproxy
+      service:
+        name: haproxy
+        state: restarted
+      when: '"tag_Ansible_haproxy" in group_names'
+
+# separate play is required to ensure handler in the play above is executed after a config change, otherwise the test will fail
+- name: Test if the haproxy is server pages correctly
+  hosts: tag_FWProt_http
+
+  tasks:
     - name: Test access to the web page through the loadbalancer
       uri:
         url: "http://{{ haproxy_ip | trim }}"
@@ -31,10 +43,3 @@
       delegate_to: localhost
       when: '"tag_Ansible_haproxy" in group_names'
       failed_when: '"reached NGINX on server" not in result.content'
-
-  handlers:
-    - name: restart haproxy
-      service:
-        name: haproxy
-        state: restarted
-      when: '"tag_Ansible_haproxy" in group_names'
