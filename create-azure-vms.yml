@@ -93,7 +93,7 @@
           version: latest
       loop: "{{ VMNames }}"
 
-    - name: Apply tag to VM - ansible-inventory-test-vm1
+    - name: Apply tags to VMs
       azure_rm_virtualmachine:
         resource_group: "{{ ResourceGroupName }}"
         name: "{{ item.name }}"
@@ -115,4 +115,3 @@
             direction: Inbound
       when: item.mytags.FWProt == 'http'
       loop: "{{ VMNames }}"
-      
