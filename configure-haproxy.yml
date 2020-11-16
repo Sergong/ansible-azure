@@ -9,13 +9,13 @@
           server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }} cookie {{ hostvars[host]['ansible_fqdn'] }} check
       {% endfor %}
 
-      
+
   tasks:
     - name: Gather nginx hostnames and IP addresses
       blockinfile: 
         path: /etc/haproxy/haproxy.cfg
         state: present
-        regexp: '^    server'
+        insertafter: '^    cookie'
         block: "{{ haproxy_block }}"
       when: '"tag_Ansible_haproxy" in group_names'
       notify: restart haproxy
