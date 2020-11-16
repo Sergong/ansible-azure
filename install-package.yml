@@ -34,7 +34,7 @@
 
     # add some test content to default homepage
     - name: Change the default home page
-      template:
+      copy:
         content: "Hi, you've reached NGINX on server {{ ansible_facts.hostname }}"
         dest: /usr/share/nginx/html/index.html
       notify: restart nginx
