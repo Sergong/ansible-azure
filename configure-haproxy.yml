@@ -6,7 +6,7 @@
   vars:
     haproxy_block: |
       {% for host in groups['tag_Ansible_nginx'] %}
-          server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }} cookie {{ hostvars[host]['ansible_fqdn'] }} check
+          server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:80 cookie {{ hostvars[host]['ansible_fqdn'] }} check
       {% endfor %}
 
 
