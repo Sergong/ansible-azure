@@ -1,0 +1,9 @@
+---
+- name: Install haproxy on the haproxy vm
+  hosts: tag_Ansible_nginx
+  become: yes
+
+  tasks:
+    - name: show facts for each VM
+      debug:
+        var: ansible_facts

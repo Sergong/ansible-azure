@@ -1,0 +1,26 @@
+---
+- name: Install haproxy on the haproxy vm
+  hosts: all
+  become: yes
+
+  vars:
+    mytag:
+      Ansible: nginx
+
+  pre_tasks:
+    - name: Gather nginx hostnames and IP addresses
+      hosts: tag_Ansible_nginx
+      set_fact: 
+        haproxy_backend_servers: "{{ haproxy_backend_servers|default([]) + [ mydict ]  }}"
+      vars:
+        mydict:
+          name: "{{ ansible_facts.hostname }}"
+          address: "{{ ansible_facts.default_ipv4.address }}"
+
+  tasks:
+    - name: Show the calculated fact
+      debug:
+        var: haproxy_backend_servers
+
+  # roles:
+  #   - geerlingguy.haproxy
