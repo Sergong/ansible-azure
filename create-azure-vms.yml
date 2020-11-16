@@ -8,19 +8,16 @@
     VMNames:
       - name: "ansible-inventory-test-vm1"
         mytags:
-          Ansible: 
-            - nginx
-            - html
+          Ansible: nginx
+          FWProt: html
       - name: "ansible-inventory-test-vm2"
         mytags:
-          Ansible: 
-            - nginx
-            - html
+          Ansible: nginx
+          FWProt: html
       - name: "ansible-inventory-test-vm3"
         mytags:
-          Ansible: 
-            - haproxy
-            - html
+          Ansible: haproxy
+          FWProt: html
     username: "smeeuwsen"
 
     vnet_name: "myVnet"
@@ -116,5 +113,5 @@
             access: Allow
             priority: 1001
             direction: Inbound
-      when: "'http' in item.mytags.Ansible"
+      when: item.mytags.FWProt == 'http'
       loop: "{{ VMNames }}"
