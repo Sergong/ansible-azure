@@ -116,5 +116,5 @@
             access: Allow
             priority: 1001
             direction: Inbound
-      when: "http" in item.mytags.Ansible
+      when: "'http' in item.mytags.Ansible"
       loop: "{{ VMNames }}"
