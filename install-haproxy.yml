@@ -1,22 +1,7 @@
 ---
 - name: Install haproxy on the haproxy vm
-  hosts: tag_FWProt_http
+  hosts: tag_Ansible_haproxy
   become: yes
 
-  tasks:
-    - name: Gather nginx hostnames and IP addresses
-      set_fact: 
-        haproxy_backend_servers: "{{ haproxy_backend_servers|default([]) + [ mydict ]  }}"
-      vars:
-        mydict:
-          name: "{{ ansible_facts.hostname }}"
-          address: "{{ ansible_facts.default_ipv4.address }}"
-      when: '"tag_Ansible_nginx" in group_names'
-      register: haproxy_backend_servers
-
-    - name: Show the calculated fact
-      debug:
-        var: haproxy_backend_servers
-
-  # roles:
-  #   - geerlingguy.haproxy
+  roles:
+    - geerlingguy.haproxy

@@ -1,0 +1,26 @@
+---
+- name: Configure haproxy on the haproxy vm
+  hosts: tag_FWProt_http
+  become: yes
+
+  vars:
+    haproxy_block: |
+      {% for host in groups['tag_Ansible_nginx'] %}
+          server {{ hostvars[host]['ansible_fqdn'] }} {{ hostvars[host]['ansible_default_ipv4']['address'] }} cookie {{ hostvars[host]['ansible_fqdn'] }} check
+      {% endfor %}
+  tasks:
+    - name: Gather nginx hostnames and IP addresses
+      blockinfile: 
+        path: /etc/haproxy/haproxy.cfg
+        state: present
+        regexp: '^    server'
+        block: 
+      when: '"tag_Ansible_haproxy" in group_names'
+      notify: restart haproxy
+
+  handlers:
+    - name: restart haproxy
+      service:
+        name: haproxy
+        state: restarted
+      when: '"tag_Ansible_haproxy" in group_names'
