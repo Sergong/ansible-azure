@@ -4,10 +4,10 @@
   become: yes
 
   tasks:
-    - name: Update Yum
-      yum:
-        name: '*'
-        state: latest
+    # - name: Update Yum
+    #   yum:
+    #     name: '*'
+    #     state: latest
 
     - name: Install the epel-release package
       yum:

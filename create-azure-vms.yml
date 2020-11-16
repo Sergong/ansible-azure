@@ -7,10 +7,22 @@
     ResourceGroupName: "ansible-inventory-test-rg"
     VMNames:
       - name: "ansible-inventory-test-vm1"
+        mytags:
+          Ansible: 
+            - nginx
+            - html
       - name: "ansible-inventory-test-vm2"
+        mytags:
+          Ansible: 
+            - nginx
+            - html
+      - name: "ansible-inventory-test-vm3"
+        mytags:
+          Ansible: 
+            - haproxy
+            - html
     username: "smeeuwsen"
-    mytags:
-      Ansible: nginx
+
     vnet_name: "myVnet"
     vnet_prefix: "10.0.0.0/16"
     vnet_subnet: "10.0.1.0/24"
@@ -87,14 +99,15 @@
     - name: Apply tag to VM - ansible-inventory-test-vm1
       azure_rm_virtualmachine:
         resource_group: "{{ ResourceGroupName }}"
-        name: "{{ VMNames[0].name }}"
+        name: "{{ item.name }}"
         state: present
-        tags: "{{ mytags }}"
+        tags: "{{ item.mytags }}"
+      loop: "{{ VMNames }}"
 
     - name: Allow HTTP for NGINX on ansible-inventory-test-vm1
       azure_rm_securitygroup:
         resource_group: "{{ ResourceGroupName }}"
-        name: "{{ VMNames[0].name }}{{ nic_name_ext }}"
+        name: "{{ item.name }}{{ nic_name_ext }}"
         state: present
         rules:
           - name: HTTP_in
@@ -103,3 +116,5 @@
             access: Allow
             priority: 1001
             direction: Inbound
+      when: "http" in item.mytags.Ansible
+      loop: "{{ VMNames }}"
