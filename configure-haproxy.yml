@@ -29,6 +29,7 @@
         return_content: true
       register: result
       delegate_to: localhost
+      when: '"tag_Ansible_haproxy" in group_names'
       failed_when: '"reached NGINX on server" not in result.content'
 
   handlers:
