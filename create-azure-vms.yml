@@ -9,15 +9,15 @@
       - name: "ansible-inventory-test-vm1"
         mytags:
           Ansible: nginx
-          FWProt: html
+          FWProt: http
       - name: "ansible-inventory-test-vm2"
         mytags:
           Ansible: nginx
-          FWProt: html
+          FWProt: http
       - name: "ansible-inventory-test-vm3"
         mytags:
           Ansible: haproxy
-          FWProt: html
+          FWProt: http
     username: "smeeuwsen"
 
     vnet_name: "myVnet"
@@ -115,3 +115,4 @@
             direction: Inbound
       when: item.mytags.FWProt == 'http'
       loop: "{{ VMNames }}"
+      
