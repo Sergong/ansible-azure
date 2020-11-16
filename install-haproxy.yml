@@ -1,6 +1,6 @@
 ---
 - name: Install haproxy on the haproxy vm
-  hosts: all
+  hosts: tag_FWProt_http
   become: yes
 
   tasks:
@@ -12,6 +12,7 @@
           name: "{{ ansible_facts.hostname }}"
           address: "{{ ansible_facts.default_ipv4.address }}"
       when: '"tag_Ansible_nginx" in group_names'
+      register: haproxy_backend_servers
 
     - name: Show the calculated fact
       debug:
