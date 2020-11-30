@@ -3,30 +3,8 @@
   hosts: localhost
   connection: local
 
-  vars:
-    ResourceGroupName: "ansible-inventory-test-rg"
-    VMNames:
-      - name: "ansible-inventory-test-vm1"
-        mytags:
-          Ansible: nginx
-          FWProt: http
-      - name: "ansible-inventory-test-vm2"
-        mytags:
-          Ansible: nginx
-          FWProt: http
-      - name: "ansible-inventory-test-vm3"
-        mytags:
-          Ansible: haproxy
-          FWProt: http
-    username: "smeeuwsen"
-
-    vnet_name: "myVnet"
-    vnet_prefix: "10.0.0.0/16"
-    vnet_subnet: "10.0.1.0/24"
-    vnet_subnet_name: "mySubnet"
-    pub_ip_name_ext: "-PublIP"
-    sec_group_name: "myNetworkSecurityGroup"
-    nic_name_ext: "-NIC"
+  vars_files:
+    - vars/vm-vars.yml
 
   tasks:
     - name: Create Resource Group
